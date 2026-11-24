@@ -20,3 +20,11 @@ services:
       SALES_INBOX_EMAIL: ${SALES_INBOX_EMAIL:-sales@example.com}
     depends_on:
       - mailpit
+
+  web:
+    build: ./web
+    ports:
+      - "8080:80" # app: http://localhost:8080
+    depends_on:
+      api:
+        condition: service_healthy

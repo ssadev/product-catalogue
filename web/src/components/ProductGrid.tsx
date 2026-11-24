@@ -19,7 +19,7 @@ export function ProductSection({ title, products }: { title: string; products: P
   const headingId = useId();
   return (
     <section aria-labelledby={headingId} className="mb-10">
-      <h2 id={headingId} className="mb-4 text-xl font-semibold capitalize">
+      <h2 id={headingId} className="mb-4 text-xl font-semibold">
         {title}
       </h2>
       <ProductGrid products={products} />
