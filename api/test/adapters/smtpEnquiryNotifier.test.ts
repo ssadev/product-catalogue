@@ -31,3 +31,25 @@ describe('SmtpEnquiryNotifier', () => {
     expect(message).not.toHaveProperty('html');
   });
 });
+
+describe('createSmtpTransport', () => {
+  it('gives up on an unresponsive mail server instead of hanging the request', async () => {
+    const { createServer } = await import('node:net');
+    const { createSmtpTransport } = await import('../../src/adapters/smtpEnquiryNotifier.js');
+    // Accepts connections but never sends the SMTP greeting.
+    const sockets: import('node:net').Socket[] = [];
+    const server = createServer((socket) => sockets.push(socket));
+    await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve));
+    const { port } = server.address() as import('node:net').AddressInfo;
+
+    const transport = createSmtpTransport({ host: '127.0.0.1', port, secure: false }, { timeoutMs: 200 });
+    const started = Date.now();
+    await expect(
+      transport.sendMail({ from: 'a@example.com', to: 'b@example.com', subject: 's', text: 't' }),
+    ).rejects.toThrow();
+    expect(Date.now() - started).toBeLessThan(2000);
+
+    sockets.forEach((s) => s.destroy());
+    server.close();
+  });
+});

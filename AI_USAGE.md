@@ -54,12 +54,20 @@ only I can → I approve → AI writes a task plan with exact test cases → AI 
 | Lockfiles built with several `npm install` runs failed `npm ci` on Linux (missing optional `@emnapi/*` packages for a wasm binding) | The Docker build failed | Regenerated lockfiles from scratch; verified `npm ci` in a Linux container; moved images to Node 24 to match the local toolchain |
 | `setState` called synchronously inside `useEffect` (data hook and search box) | `oxlint` (`react/set-state-in-effect`) | Derive state during render; tests unchanged and still green |
 | Product tile images overflowed their square frame, giving uneven tiles; section headings were `capitalize`d, which would have changed the user's search term in "Results for …" | Browser walkthrough; unit tests passed because they don't render CSS | CSS fixed and checked again in the browser |
+| The plan never set SMTP timeouts, so a silent mail server could hang an enquiry for minutes (nginx gives up at 60 s) and then still deliver, inviting a duplicate | Fresh-context whole-branch reviewer | 10 s connection/greeting/socket timeouts; test against a fake server that never greets |
+| A 400 for a field the customer can't see (e.g. `productId`) left the form silently idle | Whole-branch reviewer | Only show errors for visible fields, otherwise show the general error; test added |
+| A URL with malformed percent-encoding (`/api/products/%E0%A4%A`) returned 500 | Whole-branch reviewer (probed with supertest) | Express client errors map to 400; test added |
 | A page test was ambiguous (the category link appears in both the header and the product) | Test failure | Scoped the assertion to the product article |
 | _TODO (candidate): anything you caught when reviewing the code yourself._ | | |
 
 ## Final review
 
-_Filled in after the whole-branch review (see the PR description)._
+A fresh reviewer (Claude Opus, no access to this conversation) reviewed the whole branch against
+the spec and plan, ran the tests and probed edge cases. Verdict: no critical issues, "ready with
+fixes". Fixed before the PR (each with a failing test first): SMTP timeouts, hidden-field server
+errors in the enquiry form, and 500 on malformed URLs. Smaller findings I chose not to fix yet are
+listed in the PR description (e.g. friendlier rate-limit message, encoding ids in links, validating
+`featured.json` at startup, running lint in CI).
 
 ## Time spent
 

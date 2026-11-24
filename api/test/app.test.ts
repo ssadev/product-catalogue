@@ -28,6 +28,12 @@ describe('app skeleton', () => {
     expect(res.body).toMatchObject({ error: { code: 'VALIDATION_ERROR' } });
   });
 
+  it('malformed percent-encoding in the path is a 400, not a server error', async () => {
+    const res = await request(app).get('/api/products/%E0%A4%A');
+    expect(res.status).toBe(400);
+    expect(res.body).toMatchObject({ error: { code: 'VALIDATION_ERROR' } });
+  });
+
   it('unexpected errors return 500 without leaking internals', async () => {
     vi.spyOn(console, 'error').mockImplementation(() => {});
     const broken = express();

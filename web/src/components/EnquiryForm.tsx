@@ -26,9 +26,13 @@ function toInput(productId: string, values: Values): EnquiryInput {
   return input;
 }
 
+const FIELDS: readonly string[] = ['name', 'email', 'phone', 'message'] satisfies Field[];
+
+/** Server validation errors for fields the customer can see; undefined if there are none to show. */
 function serverFieldErrors(error: unknown): FieldErrors | undefined {
   if (!(error instanceof ApiError) || error.status !== 400 || !error.details) return undefined;
-  return Object.fromEntries(error.details.map((d) => [d.path, d.message]));
+  const visible = error.details.filter((d) => FIELDS.includes(d.path));
+  return visible.length > 0 ? Object.fromEntries(visible.map((d) => [d.path, d.message])) : undefined;
 }
 
 export function EnquiryForm({ productId, productTitle }: { productId: string; productTitle: string }) {

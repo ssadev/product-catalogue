@@ -24,11 +24,19 @@ export class SmtpEnquiryNotifier implements EnquiryNotifier {
   }
 }
 
-export function createSmtpTransport(smtp: Config['smtp']): Transporter {
+/**
+ * nodemailer's defaults wait minutes for a silent server; cap each phase so the customer gets an
+ * answer (and can retry) well before the reverse proxy times out.
+ */
+export function createSmtpTransport(smtp: Config['smtp'], options: { timeoutMs?: number } = {}): Transporter {
+  const timeoutMs = options.timeoutMs ?? 10_000;
   return nodemailer.createTransport({
     host: smtp.host,
     port: smtp.port,
     secure: smtp.secure,
     auth: smtp.user ? { user: smtp.user, pass: smtp.pass } : undefined,
+    connectionTimeout: timeoutMs,
+    greetingTimeout: timeoutMs,
+    socketTimeout: timeoutMs,
   });
 }

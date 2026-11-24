@@ -85,8 +85,8 @@ cd web && npm install && npm run dev  # http://localhost:5173, proxies /api to :
 ## Tests
 
 ```bash
-cd api && npm test        # 69 tests: adapters, services, HTTP routes (supertest)
-cd web && npm test        # 29 tests: API client, components, pages (React Testing Library)
+cd api && npm test        # 71 tests: adapters, services, HTTP routes (supertest)
+cd web && npm test        # 30 tests: API client, components, pages (React Testing Library)
 npm run typecheck         # in either app
 ```
 

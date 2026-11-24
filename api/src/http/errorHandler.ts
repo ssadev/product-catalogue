@@ -31,6 +31,13 @@ export const errorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
       return;
   }
 
+  // Other client errors raised by Express itself, e.g. a path with malformed percent-encoding.
+  const status = typeof err === 'object' && err !== null && 'status' in err ? err.status : undefined;
+  if (typeof status === 'number' && status >= 400 && status < 500) {
+    res.status(400).json({ error: { code: 'VALIDATION_ERROR', message: 'Malformed request' } });
+    return;
+  }
+
   console.error('[api] Unhandled error', err);
   res.status(500).json({ error: { code: 'INTERNAL_ERROR', message: 'Internal server error' } });
 };

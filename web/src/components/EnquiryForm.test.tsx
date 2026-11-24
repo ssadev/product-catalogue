@@ -103,4 +103,17 @@ describe('EnquiryForm', () => {
 
     expect(await screen.findByText('Invalid phone number')).toBeInTheDocument();
   });
+
+  it('shows a general error when the server rejects a field the customer cannot see', async () => {
+    vi.spyOn(api, 'submitEnquiry').mockRejectedValue(
+      new ApiError(400, 'VALIDATION_ERROR', 'Invalid request', [{ path: 'productId', message: 'Too big' }]),
+    );
+    const form = renderForm();
+
+    await userEvent.type(form.name, 'Ada');
+    await userEvent.type(form.email, 'ada@example.com');
+    await userEvent.click(form.submit);
+
+    expect(await screen.findByRole('alert')).toHaveTextContent("Sorry, we couldn't send your enquiry.");
+  });
 });
