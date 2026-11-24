@@ -13,6 +13,7 @@
 | "Thank you" | Shown only after the API confirms the email was handed to the mail server. If sending fails, the customer sees an error and keeps their input. | Never thank a customer for an enquiry that was lost. |
 | Currency | Prices shown as AUD (`en-AU`). | Fake Store has no currency; the business appears to be Australian. |
 | Category names | Fake Store names are kept for display (including its spelling "jewelery"); URLs and config use our own slugs (`mens-clothing`). | Display text is cosmetic; slugs keep provider naming out of the API contract. |
+| Source data quality | Fake Store's data is shown as-is, quirks included: the Fjallraven backpack (id 1) is categorised as "men's clothing", so it appears there (and, with no curation for that category, among its top 3 by rating). | Data quality is the data source's responsibility. Patching provider data in app code would hard-code Fake Store quirks into the catalogue and break when the source changes. The owner can still choose what is featured per category via `featured.json`. |
 | Product images | Image URLs come from our API, but the browser loads the image files from fakestoreapi.com. | The rule is about product **data**; proxying images is a next step (see below). |
 
 ## Dropped or simplified
