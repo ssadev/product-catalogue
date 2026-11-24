@@ -1,11 +1,11 @@
 import express from 'express';
 import request from 'supertest';
 import { describe, expect, it, vi } from 'vitest';
-import { createApp } from '../src/app.js';
+import { buildTestApp } from './helpers.js';
 import { errorHandler } from '../src/http/errorHandler.js';
 
 describe('app skeleton', () => {
-  const app = createApp({});
+  const { app } = buildTestApp();
 
   it('GET /api/health returns ok', async () => {
     const res = await request(app).get('/api/health');
