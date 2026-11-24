@@ -1,4 +1,4 @@
-import { type FormEvent, useEffect, useState } from 'react';
+import { type FormEvent, useState } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router';
 
 export function SearchBar() {
@@ -7,9 +7,13 @@ export function SearchBar() {
   const [params] = useSearchParams();
   const currentQuery = pathname === '/search' ? (params.get('q') ?? '') : '';
   const [term, setTerm] = useState(currentQuery);
+  const [syncedQuery, setSyncedQuery] = useState(currentQuery);
 
-  // Keep the box in sync when navigating between result pages (or away from them).
-  useEffect(() => setTerm(currentQuery), [currentQuery]);
+  // Keep the box in sync when the URL's query changes (new search, or leaving the results page).
+  if (syncedQuery !== currentQuery) {
+    setSyncedQuery(currentQuery);
+    setTerm(currentQuery);
+  }
 
   const trimmed = term.trim();
 

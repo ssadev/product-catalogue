@@ -9,22 +9,25 @@ export type ApiState<T> =
 const toApiError = (error: unknown) =>
   error instanceof ApiError ? error : new ApiError(0, 'UNKNOWN', 'Unexpected error');
 
-/** Loads data for a page. Re-runs when `deps` change and ignores responses that arrive late. */
-export function useApi<T>(load: () => Promise<T>, deps: unknown[]): ApiState<T> {
-  const [state, setState] = useState<ApiState<T>>({ status: 'loading' });
+/**
+ * Loads data for a page. Re-runs when `deps` change; while the result for the current deps has not
+ * arrived it reports `loading`, and responses for stale deps are ignored.
+ */
+export function useApi<T>(load: () => Promise<T>, deps: readonly unknown[]): ApiState<T> {
+  const key = JSON.stringify(deps);
+  const [result, setResult] = useState<{ key: string; state: ApiState<T> }>();
 
   useEffect(() => {
     let active = true;
-    setState({ status: 'loading' });
     load().then(
-      (data) => active && setState({ status: 'success', data }),
-      (error: unknown) => active && setState({ status: 'error', error: toApiError(error) }),
+      (data) => active && setResult({ key, state: { status: 'success', data } }),
+      (error: unknown) => active && setResult({ key, state: { status: 'error', error: toApiError(error) } }),
     );
     return () => {
       active = false;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- callers pass the inputs `load` depends on
-  }, deps);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- `key` captures the inputs `load` depends on
+  }, [key]);
 
-  return state;
+  return result?.key === key ? result.state : { status: 'loading' };
 }
