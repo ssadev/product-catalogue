@@ -1,0 +1,22 @@
+services:
+  mailpit:
+    image: axllent/mailpit:v1.27
+    ports:
+      - "8025:8025" # inbox UI: http://localhost:8025
+      - "1025:1025" # SMTP (handy when running the api outside Docker)
+
+  api:
+    build: ./api
+    environment:
+      PRODUCT_SOURCE: ${PRODUCT_SOURCE:-fakestore}
+      FAKESTORE_BASE_URL: ${FAKESTORE_BASE_URL:-https://fakestoreapi.com}
+      CATALOG_CACHE_TTL_SECONDS: ${CATALOG_CACHE_TTL_SECONDS:-300}
+      SMTP_HOST: ${SMTP_HOST:-mailpit}
+      SMTP_PORT: ${SMTP_PORT:-1025}
+      SMTP_SECURE: ${SMTP_SECURE:-false}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASS: ${SMTP_PASS:-}
+      MAIL_FROM: ${MAIL_FROM:-catalogue@example.com}
+      SALES_INBOX_EMAIL: ${SALES_INBOX_EMAIL:-sales@example.com}
+    depends_on:
+      - mailpit
