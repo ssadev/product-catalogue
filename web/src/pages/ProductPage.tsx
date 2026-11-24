@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router';
 import { api } from '../api/client';
 import type { Category, Product } from '../api/types';
 import { useApi } from '../api/useApi';
+import { EnquiryForm } from '../components/EnquiryForm';
 import { StatusMessage } from '../components/StatusMessage';
 import { formatPrice } from '../lib/formatPrice';
 
@@ -60,6 +61,7 @@ function ProductDetails({ product, categoryName }: { product: Product; categoryN
             Enquire
           </button>
         </div>
+        {enquiring && <EnquiryForm productId={product.id} productTitle={product.title} />}
       </div>
     </article>
   );

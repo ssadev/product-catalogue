@@ -1,4 +1,5 @@
 import { screen, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { api, ApiError } from '../api/client';
 import { categories, products } from '../test/fixtures';
@@ -25,5 +26,20 @@ describe('ProductPage', () => {
     vi.spyOn(api, 'getProduct').mockRejectedValue(new ApiError(404, 'NOT_FOUND', 'Product not found'));
     renderRoute('/products/999');
     expect(await screen.findByText('Product not found')).toBeInTheDocument();
+  });
+});
+
+describe('ProductPage enquiry', () => {
+  it('reveals the enquiry form when Enquire is clicked', async () => {
+    vi.spyOn(api, 'getCategories').mockResolvedValue(categories);
+    vi.spyOn(api, 'getProduct').mockResolvedValue(products[0]!);
+    renderRoute('/products/3');
+
+    const enquire = await screen.findByRole('button', { name: 'Enquire' });
+    expect(screen.queryByRole('form', { name: 'Enquiry' })).not.toBeInTheDocument();
+    await userEvent.click(enquire);
+
+    expect(enquire).toHaveAttribute('aria-expanded', 'true');
+    expect(screen.getByRole('form', { name: 'Enquiry' })).toBeInTheDocument();
   });
 });
