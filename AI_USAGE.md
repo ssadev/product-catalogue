@@ -4,17 +4,18 @@
 
 - **Claude Code** (CLI) with **Claude Opus 5.5**: planning, design, implementation, tests, docs.
   - Used with the *superpowers* skill set: `brainstorming` (requirements → design), `writing-plans`
-    (design → task plan), `executing-plans` + `test-driven-development` (build each task test-first),
-    `verification-before-completion`.
+  (design → task plan), `executing-plans` + `test-driven-development` (build each task test-first),
+  `verification-before-completion`.
   - A **fresh-context reviewer subagent** read the design doc before planning ("builder check"), and
-    another reviewed the whole branch at the end.
+  another reviewed the whole branch at the end.
   - Claude in Chrome to walk through the running app in a real browser.
-- **ChatGPT**: _TODO (candidate): what you used it for._
+- **ChatGPT**: summarising and clarifying concepts where I had doubts, and as a sounding board for
+  brainstorming ideas alongside the Claude Code session.
 
 ## Agent instruction files
 
 - [`CLAUDE.md`](CLAUDE.md): project rules for agents (boundaries, where adapters go, validation,
-  Tailwind tokens, TDD, run typecheck + tests before committing).
+Tailwind tokens, TDD, run typecheck + tests before committing).
 
 ## Plan and spec
 
@@ -58,7 +59,6 @@ only I can → I approve → AI writes a task plan with exact test cases → AI 
 | A 400 for a field the customer can't see (e.g. `productId`) left the form silently idle | Whole-branch reviewer | Only show errors for visible fields, otherwise show the general error; test added |
 | A URL with malformed percent-encoding (`/api/products/%E0%A4%A`) returned 500 | Whole-branch reviewer (probed with supertest) | Express client errors map to 400; test added |
 | A page test was ambiguous (the category link appears in both the header and the product) | Test failure | Scoped the assertion to the product article |
-| _TODO (candidate): anything you caught when reviewing the code yourself._ | | |
 
 ## Final review
 
@@ -71,15 +71,13 @@ listed in the PR description (e.g. friendlier rate-limit message, encoding ids i
 
 ## Time spent
 
-_TODO (candidate): fill in actual times._
-
-| Activity | Time |
-|---|---|
-| Reading the brief, planning and design (incl. ChatGPT) | |
-| Building (API + web + Docker) | |
-| Testing (automated + browser walkthrough) | |
-| Reviewing code and docs | |
-| **Total** | |
+| Activity                                               | Time    |
+| ------------------------------------------------------ | ------- |
+| Reading the brief, planning and design (incl. ChatGPT) | 45 Mins |
+| Building (API + web + Docker)                          | 1h      |
+| Testing (automated + browser walkthrough)              | 1h      |
+| Reviewing code and docs                                | 2h      |
+| **Total**                                              | **4h 45m** |
 
 For reference: the Claude Code session started at about 12:03 and all tasks were committed by 13:04
 on 24 Nov 2026.
